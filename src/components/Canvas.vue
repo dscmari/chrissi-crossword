@@ -1,6 +1,10 @@
 <template>
     <div id="canvas-container">
+        <form ref="form" action="#">
+                <!--  -->
+        </form>
         <canvas ref="canvas" @click="handleCanvasClick"></canvas>
+ 
     </div>
 </template>
 
@@ -22,8 +26,8 @@ export default {
             const context = canvas.getContext('2d');
             
             // Style the canvas
-            canvas.width = 1000;
-            canvas.height = 1000;
+            canvas.width = 800;
+            canvas.height = 800;
             context.fillStyle = 'white';
             context.fillRect(0, 0, canvas.width, canvas.height);
             const lineWidth = 0.3;
@@ -33,8 +37,8 @@ export default {
             var canvasLeft = canvas.offsetLeft;
             var canvasTop = canvas.offsetTop;
 
-            const numColumns = 18;
-            const numRows = 18;
+            const numColumns = 16;
+            const numRows = 15;
 
             // Calculate cell size based on canvas dimensions and grid size
             const cellWidth = canvas.width / numColumns;
@@ -51,24 +55,28 @@ export default {
             const arrowRight = "right";
             const arrowDown = "down"
 
-            
-            //TODO loop
+            //Create array with crossword questions
             const questionsArray = []
             for(let i = 0; i<15; i++){
                 const question = this.getQuestion(i);
                 questionsArray.push(question)
             }
 
-            this.createQuestionCell(4,2, cellWidth, cellHeight, canvasLeft, canvasTop, lineWidth, questionsArray[0], arrowRight)
-            this.createQuestionCell(2,13, cellWidth, cellHeight, canvasLeft, canvasTop, lineWidth, questionsArray[1], arrowRight)
-            this.createQuestionCell(10,8, cellWidth, cellHeight, canvasLeft, canvasTop, lineWidth, questionsArray[2], arrowDown)
-            this.createQuestionCell(5,6, cellWidth, cellHeight, canvasLeft, canvasTop, lineWidth, questionsArray[3], arrowDown)
-            this.createQuestionCell(15,5, cellWidth, cellHeight, canvasLeft, canvasTop, lineWidth, questionsArray[4], arrowDown)
-            this.createQuestionCell(4,5, cellWidth, cellHeight, canvasLeft, canvasTop, lineWidth, questionsArray[5], arrowRight)
-            this.createQuestionCell(7,7, cellWidth, cellHeight, canvasLeft, canvasTop, lineWidth, questionsArray[6], arrowDown)
-            this.createQuestionCell(0,11, cellWidth, cellHeight, canvasLeft, canvasTop, lineWidth, questionsArray[7], arrowRight)
-            this.createQuestionCell(12,1, cellWidth, cellHeight, canvasLeft, canvasTop, lineWidth, questionsArray[8], arrowDown)
-            this.createQuestionCell(8,0, cellWidth, cellHeight, canvasLeft, canvasTop, lineWidth, questionsArray[9], arrowDown)
+            this.createQuestionCell(1,0, cellWidth, cellHeight, canvasLeft, canvasTop, lineWidth, questionsArray[0], arrowDown)
+            this.createQuestionCell(15,5, cellWidth, cellHeight, canvasLeft, canvasTop, lineWidth, questionsArray[1], arrowDown)
+            this.createQuestionCell(10,11, cellWidth, cellHeight, canvasLeft, canvasTop, lineWidth, questionsArray[2], arrowRight)
+            this.createQuestionCell(5,2, cellWidth, cellHeight, canvasLeft, canvasTop, lineWidth, questionsArray[3], arrowRight)
+            this.createQuestionCell(4,2, cellWidth, cellHeight, canvasLeft, canvasTop, lineWidth, questionsArray[4], arrowDown)
+            this.createQuestionCell(6,4, cellWidth, cellHeight, canvasLeft, canvasTop, lineWidth, questionsArray[5], arrowDown)
+            this.createQuestionCell(7,9, cellWidth, cellHeight, canvasLeft, canvasTop, lineWidth, questionsArray[6], arrowRight)
+            this.createQuestionCell(12,1, cellWidth, cellHeight, canvasLeft, canvasTop, lineWidth, questionsArray[7], arrowDown)
+            this.createQuestionCell(2,7, cellWidth, cellHeight, canvasLeft, canvasTop, lineWidth, questionsArray[8], arrowRight)
+            this.createQuestionCell(8,1, cellWidth, cellHeight, canvasLeft, canvasTop, lineWidth, questionsArray[9], arrowDown)
+            this.createQuestionCell(0,3, cellWidth, cellHeight, canvasLeft, canvasTop, lineWidth, questionsArray[10], arrowRight)
+            this.createQuestionCell(5,11, cellWidth, cellHeight, canvasLeft, canvasTop, lineWidth, questionsArray[11], arrowRight)
+            this.createQuestionCell(11,2, cellWidth, cellHeight, canvasLeft, canvasTop, lineWidth, questionsArray[12], arrowRight)
+            this.createQuestionCell(10,13, cellWidth, cellHeight, canvasLeft, canvasTop, lineWidth, questionsArray[13], arrowRight)
+            this.createQuestionCell(4,13, cellWidth, cellHeight, canvasLeft, canvasTop, lineWidth, questionsArray[14], arrowRight)
         },
  
         getCellCoordinates(column, row, cellWidth, cellHeight) {
@@ -82,19 +90,13 @@ export default {
             const cellCoordinates = this.getCellCoordinates(x, y, cellWidth, cellHeight);
             const cellDiv = document.createElement('div');
 
-            // Berücksichtigen Sie den Scroll-Offset
-            const scrollX = window.scrollX;
-            const scrollY = window.scrollY;
-
             cellDiv.style.position = 'absolute';
             cellDiv.style.left = `${canvasLeft + cellCoordinates.x + (lineWidth) * 10}px`;
             cellDiv.style.top = `${canvasTop + cellCoordinates.y + (lineWidth) * 10}px`;
             cellDiv.style.width = `${cellWidth}px`;
             cellDiv.style.height = `${cellHeight}px`;
             cellDiv.style.display = 'flex';
-         
             cellDiv.style.alignItems = 'center';
-
 
 
             const questionElement = this.createQuestion(question)
@@ -137,7 +139,29 @@ export default {
         },
 
         handleCanvasClick(event) {
-            // Handle the click event, create input fields, etc.
+            const form = this.$refs.form;
+            console.log(form)
+            
+            const inputX = event.offsetX;
+            const inputY = event.offsetY;
+            console.log(inputX)
+            console.log(inputY)
+            const inputCell = document.createElement('input')
+            inputCell.style.position = 'absolute'
+            inputCell.style.height = '50px';
+            inputCell.style.width = '100px';
+            inputCell.style.backgroundColor = 'red';
+            inputCell.style.left = inputX + 'px';
+            inputCell.style.top = inputY + 'px';
+            inputCell.value = 'Your Text Here'; // Or any content you want to display
+
+            inputCell.style.zIndex = "20"
+          
+            console.log(inputCell)
+            form.appendChild(inputCell); //here the input cell is not visible
+            // document.body.appendChild(inputCell) //this works, its visible
+            console.log(`Clicked at coordinates relative to canvas: (${inputX}, ${inputY})`);
+
         },
     },
 };
@@ -172,5 +196,12 @@ p{
 }
 .arrow{
     z-index: 1;
+}
+
+form{
+    position: relative;
+    height: 10px;
+    width: 20px;
+    background-color: yellow;
 }
 </style>
