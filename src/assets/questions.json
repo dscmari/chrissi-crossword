@@ -6,7 +6,7 @@
         "Lieblingsgetränk" : "KAFFE"
     },
     "question-3" : {
-        "Lichtquelle" : "KERZE"
+        "Geg. Flut" : "EBBE"
     },
     "question-4" : {
         "Milchkaffe (Cafè ...)" : "LATTE"
@@ -33,7 +33,7 @@
         "Engl. hoch" : "HIGH"
     },
     "question-12" : {
-        "Flüssiges Fett" : "OEL"
+        "Schmieren" : "OELEN"
     },
     "question-13" : {
         "Schlange im Dschungelbuch" : "KAA"
@@ -42,7 +42,7 @@
         "Zierde (Kw.)" : "DEKO"
     },
     "question-15" : {
-        "Aufgussgetränk" : "TEE"
+        "Lichtquelle" : "KERZE"
     }
 
 }
