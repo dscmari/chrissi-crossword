@@ -1,9 +1,12 @@
 <template>
     <div id="canvas-container">
+        <Solution :solutionCells="solutionCells" />
         <form ref="form" action="#">
             <!-- dynamically created input -->
         </form>
+
         <canvas ref="canvas" @click="handleCanvasClick"></canvas>
+
     </div>
 </template>
 
@@ -11,12 +14,17 @@
 <script>
 import questions from "/src/assets/questions.json";
 import crossword2D from "/src/assets/crossword2D";
+import Solution from "./Solution.vue";
 
 export default {
     data() {
         return {
-            crossword2D: crossword2D
+            crossword2D: crossword2D,
+            solutionCells: []
         };
+    },
+    components: {
+        Solution
     },
     mounted() {
         this.initCanvas();
@@ -24,7 +32,7 @@ export default {
     methods: {
         initCanvas() {
             this.getLocalStorage()
-
+            this.updateSolution()
 
             const canvas = this.$refs.canvas;
             const context = canvas.getContext('2d');
@@ -128,9 +136,56 @@ export default {
         },
 
         getLocalStorage() {
-            const storedState = localStorage.getItem('crosswordState');
-            if (storedState) {
-                crossword2D["crossword2D-questions"] = JSON.parse(storedState);
+            const crosswordState = localStorage.getItem('crosswordState');
+            if (crosswordState) {
+                crossword2D["crossword2D-questions"] = JSON.parse(crosswordState);
+            }
+        },
+
+        updateSolution() {
+            this.solutionCell1 = crossword2D["crossword2D-questions"][3][3]; //G
+            this.solutionCell2 = crossword2D["crossword2D-questions"][7][4]; //L
+            this.solutionCell3 = crossword2D["crossword2D-questions"][5][1]; //U
+            this.solutionCell4 = crossword2D["crossword2D-questions"][11][15]; //E
+            this.solutionCell5 = crossword2D["crossword2D-questions"][2][1]; //C
+            this.solutionCell6 = crossword2D["crossword2D-questions"][2][12]; //K
+
+            let solutionCells = [];
+            for (let i = 1; i < 7; i++) {
+                solutionCells.push(this["solutionCell" + i]);
+            }
+            console.log(solutionCells)
+            this.solutionCells = solutionCells;
+        },
+
+        checkIfEmptyCell() {
+            const isEmpty = x => x === "";
+            console.log(crossword2D["crossword2D-questions"].some(row => row.some(isEmpty)))
+            return crossword2D["crossword2D-questions"].some(row => row.some(isEmpty));
+        },
+
+        are2DArraysEqual() {
+            const arrayUser = crossword2D["crossword2D-questions"];
+            const arrayCorrect = crossword2D["crossword2D"]
+            for (let i = 0; i < arrayUser.length; i++) {
+                for (let j = 0; j < arrayUser.length; j++) {
+                    if (arrayUser[i][j] !== arrayCorrect[i][j]) {
+                        console.log("arrays are not equal")
+                        return false;
+                    }
+                }
+            }
+            console.log("arrays are equal")
+            return true;
+        },
+
+        checkIfFinished() {
+            const hasEmptyCell = this.checkIfEmptyCell();
+            if (!hasEmptyCell) {
+                console.log("no cell empty")
+                if(this.are2DArraysEqual()){
+                    alert("you won hurrai")
+                }
             }
         },
 
@@ -139,13 +194,9 @@ export default {
             const canvas = this.$refs.canvas;
             const context = canvas.getContext('2d');
 
-
-            const inputX = event.offsetX;
-            const inputY = event.offsetY;
             const input = document.createElement('input')
             input.type = 'text';
             input.maxLength = 1;
-
 
             //size input element
             const cols = 16;
@@ -189,38 +240,32 @@ export default {
                 // Ensure that the input only contains A-Z
                 inputValue = inputValue.replace(/[^A-Z]/g, '');
 
-                // Set the transformed value back to the input
-                event.target.value = inputValue;
-
                 userInput = inputValue.charAt(0);
 
                 if (userInput) {
                     crossword2D["crossword2D-questions"][clickedRow][clickedColumn] = userInput;
 
+                    //pass solution cells to solution component
+                    this.updateSolution()
                     this.updateLocalStorage();
-                    const canvas = this.$refs.canvas;
-                    const context = canvas.getContext('2d');
-                    const cols = 16;
-                    const rows = 15;
-                    canvas.width = 1000;
-                    canvas.height = 1000;
-                    const cellWidth = canvas.width / cols;
-                    const cellHeight = canvas.height / rows;
-
                     this.drawGrid(canvas, context, cols, rows, cellWidth, cellHeight)
+                    this.checkIfFinished()
+
                 }
             });
 
-
             input.addEventListener('keydown', event => {
 
+                event.target.value = '';
+
                 if (event.key === 'Delete' || event.key === 'Backspace') {
-                    // Handle delete key, clear the value in the cell
+                    // do not delete questions
                     if (crossword2D["crossword2D-questions"][clickedRow][clickedColumn].length > 1) {
                         return
                     }
                     crossword2D["crossword2D-questions"][clickedRow][clickedColumn] = '';
                     input.placeholder = '';
+                    this.updateSolution();
                 } else if (event.key === 'ArrowLeft' && clickedColumn > 0) {
                     // Move left if not at the leftmost column
                     clickedColumn--;
@@ -268,7 +313,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 * {
     padding: 0;
     margin: 0;
