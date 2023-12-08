@@ -4,7 +4,7 @@ import Canvas from './components/Canvas.vue';
 
 <template>
   <div>
-    <h1>Headline</h1>
+    <h1>Chrissi Crossword</h1>
   </div>
   <Canvas />
 </template>

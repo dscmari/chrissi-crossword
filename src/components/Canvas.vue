@@ -1,12 +1,10 @@
 <template>
     <div id="canvas-container">
-        <Solution :solutionCells="solutionCells" />
         <form ref="form" action="#">
             <!-- dynamically created input -->
         </form>
-
         <canvas ref="canvas" @click="handleCanvasClick"></canvas>
-
+        <Solution :solutionCells="solutionCells" />
     </div>
 </template>
 
@@ -55,62 +53,88 @@ export default {
             // const arrowDown = "down";
 
         },
+        getFontSize(cellContent) {
+            return cellContent.length > 1 ? '12px serif' : '24px serif';
+        },
 
         drawGrid(canvas, context, cols, rows, cellWidth, cellHeight) {
-            console.log("drawGrid called")
             context.clearRect(0, 0, canvas.width, canvas.height);
-
             // Draw the grid
-
             const lineWidth = 0.3;
             context.lineWidth = lineWidth;
-            context.font = "12px serif";
             context.textAlign = 'center';
             context.textBaseline = 'middle';
-
             for (let i = 0; i < cols; i++) {
                 for (let j = 0; j < rows; j++) {
-
                     // Draw the cell boundaries
                     context.strokeRect(i * cellWidth, j * cellHeight, cellWidth, cellHeight);
-
-
                     // Draw the word with custom line breaks within the cell
-
-
                     const cellContent = crossword2D["crossword2D-questions"][j][i];
+                    // Set font size based on the length of cell content
+                    context.font = this.getFontSize(cellContent);
+                    // Check if the cell content is '-'
+                    if (cellContent === '-') {
+                        // Draw an empty string with a red background for the cell
+                        context.fillStyle = '#F40009';
+                        context.fillRect(i * cellWidth, j * cellHeight, cellWidth, cellHeight);
+                        context.fillStyle = 'black';  // Reset the fill color
+                    } else {
+                        const maxLineWidth = cellWidth - 10;
+                        const words = cellContent.split(' ');
+                        let line = '';
+                        let lines = [];
+                        let currentLineWidth = 0;
+                        for (let word of words) {
+                            const wordWidth = context.measureText(word + ' ').width;
 
-                    const maxLineWidth = cellWidth;
-                    const words = cellContent.split(' ');
-
-                    let line = '';
-                    let lines = [];
-                    let currentLineWidth = 0;
-
-                    for (let word of words) {
-                        const wordWidth = context.measureText(word + ' ').width;
-
-                        if (currentLineWidth + wordWidth <= maxLineWidth) {
-                            // Word fits within the line
-                            line += word + ' ';
-                            currentLineWidth += wordWidth;
-                        } else {
-                            // Start a new line with the current word
-                            lines.push(line.trim());
-                            line = word + ' ';
-                            currentLineWidth = wordWidth;
+                            // Check if the word itself is too long for the cell
+                            if (wordWidth > maxLineWidth) {
+                                // Break the word into smaller segments
+                                let segment = '';
+                                for (let char of word) {
+                                    const charWidth = context.measureText(char).width;
+                                    if (currentLineWidth + charWidth <= maxLineWidth) {
+                                        // Character fits within the line
+                                        segment += char;
+                                        currentLineWidth += charWidth;
+                                    } else {
+                                        // Start a new line with the current segment
+                                        // Add a hyphen before the break
+                                        if (segment !== '') {
+                                            lines.push(segment + '-');
+                                        }
+                                        segment = char;
+                                        currentLineWidth = charWidth;
+                                    }
+                                }
+                                // Add the last segment
+                                if (segment !== '') {
+                                    lines.push(segment);
+                                }
+                            } else {
+                                // Check if adding the word would exceed the maxLineWidth
+                                if (currentLineWidth + wordWidth <= maxLineWidth) {
+                                    // Word fits within the line
+                                    line += word + ' ';
+                                    currentLineWidth += wordWidth;
+                                } else {
+                                    // Start a new line with the current word
+                                    lines.push(line.trim());
+                                    line = word + ' ';
+                                    currentLineWidth = wordWidth;
+                                }
+                            }
                         }
+                        // Add the last line
+                        lines.push(line.trim());
+                        // Draw each line within the same cell
+                        let y = j * cellHeight - lines.length / 100; // Adjust the vertical positioning
+                        lines.forEach(line => {
+                            context.fillText(line, i * cellWidth + cellWidth / 2, y + cellHeight / 2);
+                            y += 10; // Adjust the line spacing
+                        });
                     }
 
-                    // Add the last line
-                    lines.push(line.trim());
-
-                    // Draw each line within the same cell
-                    let y = j * cellHeight - lines.length / 100; // Adjust the vertical positioning
-                    lines.forEach(line => {
-                        context.fillText(line, i * cellWidth + cellWidth / 2, y + cellHeight / 2);
-                        y += 10; // Adjust the line spacing
-                    });
                 }
             }
         },
@@ -183,7 +207,7 @@ export default {
             const hasEmptyCell = this.checkIfEmptyCell();
             if (!hasEmptyCell) {
                 console.log("no cell empty")
-                if(this.are2DArraysEqual()){
+                if (this.are2DArraysEqual()) {
                     alert("you won hurrai")
                 }
             }
@@ -194,26 +218,33 @@ export default {
             const canvas = this.$refs.canvas;
             const context = canvas.getContext('2d');
 
+            const cols = 16;
+            const rows = 15;
+            const cellWidth = canvas.width / cols;
+            const cellHeight = canvas.height / rows;
+            let clickedColumn = Math.floor(event.offsetX / cellWidth);
+            let clickedRow = Math.floor(event.offsetY / cellHeight);
+
+            //check of if we are on a red cell
+            if (crossword2D["crossword2D-questions"][clickedRow][clickedColumn] === '-') {
+                return;
+            }
+
             const input = document.createElement('input')
             input.type = 'text';
             input.maxLength = 1;
 
             //size input element
-            const cols = 16;
-            const rows = 15;
-            const cellWidth = canvas.width / cols;
-            const cellHeight = canvas.height / rows;
             input.style.height = cellHeight + 'px';
             input.style.width = cellWidth + 'px';
             input.style.maxHeight = cellHeight + 'px';
             input.style.maxWidth = cellWidth + 'px';
 
             //position input elements
+            //+3px because of the outer border
             input.style.position = 'absolute'
-            let clickedColumn = Math.floor(event.offsetX / cellWidth);
-            let clickedRow = Math.floor(event.offsetY / cellHeight);
-            input.style.left = `${clickedColumn * cellWidth + 2}px`;
-            input.style.top = `${clickedRow * cellHeight + 12}px`;
+            input.style.left = `${clickedColumn * cellWidth + 3}px`;
+            input.style.top = `${clickedRow * cellHeight + 3}px`;
 
             //style input element
             // input.style.backgroundColor = 'red';
@@ -227,11 +258,16 @@ export default {
 
 
             let userInput = '';
-            let currentCell = '';
+            let currentCell = crossword2D["crossword2D-questions"][clickedRow][clickedColumn];
 
             //TODO change element to append to? Is form correct?
             form.appendChild(input);
+            console.log(currentCell)
+            console.log(currentCell.length)
+           
             input.focus();
+            
+            
 
             input.addEventListener('input', event => {
                 // Get the input value and transform to uppercase
@@ -267,21 +303,33 @@ export default {
                     input.placeholder = '';
                     this.updateSolution();
                 } else if (event.key === 'ArrowLeft' && clickedColumn > 0) {
+                    if (crossword2D["crossword2D-questions"][clickedRow][clickedColumn - 1] === '-') {
+                        return;
+                    }
                     // Move left if not at the leftmost column
                     clickedColumn--;
                     currentCell = crossword2D["crossword2D-questions"][clickedRow][clickedColumn];
                     input.placeholder = currentCell;
                 } else if (event.key === 'ArrowRight' && clickedColumn < cols - 1) {
+                    if (crossword2D["crossword2D-questions"][clickedRow][clickedColumn + 1] === '-') {
+                        return;
+                    }
                     // Move right if not at the rightmost column
                     clickedColumn++;
                     currentCell = crossword2D["crossword2D-questions"][clickedRow][clickedColumn];
                     input.placeholder = currentCell;
                 } else if (event.key === 'ArrowUp' && clickedRow > 0) {
+                    if (crossword2D["crossword2D-questions"][clickedRow - 1][clickedColumn] === '-') {
+                        return;
+                    }
                     // Move up if not at the top row
                     clickedRow--;
                     currentCell = crossword2D["crossword2D-questions"][clickedRow][clickedColumn];
                     input.placeholder = currentCell;
                 } else if (event.key === 'ArrowDown' && clickedRow < rows - 1) {
+                    if (crossword2D["crossword2D-questions"][clickedRow + 1][clickedColumn] === '-') {
+                        return;
+                    }
                     // Move down if not at the bottom row
                     clickedRow++;
                     currentCell = crossword2D["crossword2D-questions"][clickedRow][clickedColumn];
@@ -289,17 +337,25 @@ export default {
                 }
 
                 // Set the updated position
-                input.style.left = `${clickedColumn * cellWidth + 2}px`;
-                input.style.top = `${clickedRow * cellHeight + 12}px`;
+                input.style.left = `${clickedColumn * cellWidth + 3}px`;
+                input.style.top = `${clickedRow * cellHeight + 3}px`;
 
                 this.updateLocalStorage();
                 this.drawGrid(canvas, context, cols, rows, cellWidth, cellHeight);
             });
 
             input.addEventListener('focus', () => {
-                // Store the value of the current cell when focused
-                currentCell = crossword2D["crossword2D-questions"][clickedRow][clickedColumn];
-                input.placeholder = currentCell;
+                // Get the content of the current cell
+                const cellContent = crossword2D["crossword2D-questions"][clickedRow][clickedColumn];
+                console.log("focus event fires");
+
+                // Check if the content of the cell is bigger than 1
+                if (cellContent.length > 1) {
+                    // Store the value of the current cell when focused
+                    currentCell = cellContent;
+                    input.placeholder = currentCell;
+                    console.log(cellContent);
+                }
             });
 
             // Remove the input element on blur
@@ -322,7 +378,7 @@ export default {
 canvas {
     display: block;
     position: relative;
-    border: solid 3px green;
+    border: solid 3px black;
 }
 
 #canvas-container {
@@ -347,9 +403,6 @@ p {
 
 form {
     position: relative;
-    height: 10px;
-    width: 20px;
-    background-color: yellow;
     z-index: 30;
 }
 </style>
