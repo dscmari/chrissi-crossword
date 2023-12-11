@@ -178,13 +178,11 @@ export default {
             for (let i = 1; i < 7; i++) {
                 solutionCells.push(this["solutionCell" + i]);
             }
-            console.log(solutionCells)
             this.solutionCells = solutionCells;
         },
 
         checkIfEmptyCell() {
             const isEmpty = x => x === "";
-            console.log(crossword2D["crossword2D-questions"].some(row => row.some(isEmpty)))
             return crossword2D["crossword2D-questions"].some(row => row.some(isEmpty));
         },
 
@@ -194,19 +192,16 @@ export default {
             for (let i = 0; i < arrayUser.length; i++) {
                 for (let j = 0; j < arrayUser.length; j++) {
                     if (arrayUser[i][j] !== arrayCorrect[i][j]) {
-                        console.log("arrays are not equal")
                         return false;
                     }
                 }
             }
-            console.log("arrays are equal")
             return true;
         },
 
         checkIfFinished() {
             const hasEmptyCell = this.checkIfEmptyCell();
             if (!hasEmptyCell) {
-                console.log("no cell empty")
                 if (this.are2DArraysEqual()) {
                     alert("you won hurrai")
                 }
@@ -225,11 +220,10 @@ export default {
             let clickedColumn = Math.floor(event.offsetX / cellWidth);
             let clickedRow = Math.floor(event.offsetY / cellHeight);
 
-            //check of if we are on a red cell
-            if (crossword2D["crossword2D-questions"][clickedRow][clickedColumn] === '-') {
+            //do not create input field if its red cell or question
+            if (crossword2D["crossword2D-questions"][clickedRow][clickedColumn] === '-' || crossword2D["crossword2D-questions"][clickedRow][clickedColumn].length > 1 ) {
                 return;
             }
-
             const input = document.createElement('input')
             input.type = 'text';
             input.maxLength = 1;
@@ -262,8 +256,6 @@ export default {
 
             //TODO change element to append to? Is form correct?
             form.appendChild(input);
-            console.log(currentCell)
-            console.log(currentCell.length)
            
             input.focus();
             
@@ -294,6 +286,8 @@ export default {
 
                 event.target.value = '';
 
+               
+                console.log(clickedColumn)
                 if (event.key === 'Delete' || event.key === 'Backspace') {
                     // do not delete questions
                     if (crossword2D["crossword2D-questions"][clickedRow][clickedColumn].length > 1) {
@@ -302,12 +296,50 @@ export default {
                     crossword2D["crossword2D-questions"][clickedRow][clickedColumn] = '';
                     input.placeholder = '';
                     this.updateSolution();
-                } else if (event.key === 'ArrowLeft' && clickedColumn > 0) {
-                    if (crossword2D["crossword2D-questions"][clickedRow][clickedColumn - 1] === '-') {
-                        return;
+                    //ArrowLeft
+                } else if (event.key === 'ArrowLeft') {
+                    if(clickedColumn === 0){
+                        if(crossword2D["crossword2D-questions"][clickedRow][15] === '-'){
+                            clickedColumn = 14;
+                        } else clickedColumn = 15;
                     }
-                    // Move left if not at the leftmost column
-                    clickedColumn--;
+                    else if(clickedColumn === 1 && (crossword2D["crossword2D-questions"][clickedRow][clickedColumn-1].length > 1 || crossword2D["crossword2D-questions"][clickedRow][clickedColumn-1] === '-')){
+                        if(crossword2D["crossword2D-questions"][clickedRow][15] === '-'){
+                            clickedColumn = 14;
+                        } else clickedColumn = 15;
+                    }
+                    else if(crossword2D["crossword2D-questions"][clickedRow][clickedColumn-3] === undefined){
+                            if(crossword2D["crossword2D-questions"][clickedRow][clickedColumn-1].length > 1){
+                                if(crossword2D["crossword2D-questions"][clickedRow][15] === '-'){
+                                    clickedColumn = 14;
+                                }else clickedColumn = 15;
+                            } else clickedColumn--;
+                    }
+                    else if(
+                        (crossword2D["crossword2D-questions"][clickedRow][clickedColumn-3].length > 1 || crossword2D["crossword2D-questions"][clickedRow][clickedColumn-3] === '-')
+                        && (crossword2D["crossword2D-questions"][clickedRow][clickedColumn-2].length > 1 || crossword2D["crossword2D-questions"][clickedRow][clickedColumn-2] === '-')
+                        && (crossword2D["crossword2D-questions"][clickedRow][clickedColumn-1].length > 1 || crossword2D["crossword2D-questions"][clickedRow][clickedColumn-1] === '-')
+                    ){
+                        	clickedColumn = clickedColumn -4
+                    }
+                    else if(
+                        (crossword2D["crossword2D-questions"][clickedRow][clickedColumn-2].length > 1 || crossword2D["crossword2D-questions"][clickedRow][clickedColumn-2] === '-')
+                        && (crossword2D["crossword2D-questions"][clickedRow][clickedColumn-1].length > 1 || crossword2D["crossword2D-questions"][clickedRow][clickedColumn-1] === '-')
+                    ){
+                        	clickedColumn = clickedColumn -3
+                    }
+                    else if(
+                        (crossword2D["crossword2D-questions"][clickedRow][clickedColumn-1].length > 1 || crossword2D["crossword2D-questions"][clickedRow][clickedColumn-1] === '-')
+                    ){
+                        	clickedColumn = clickedColumn -2
+                    }
+                    else{
+                        clickedColumn--
+                    }
+                    console.log("clicked column: " + clickedColumn)
+                   
+                    
+                    
                     currentCell = crossword2D["crossword2D-questions"][clickedRow][clickedColumn];
                     input.placeholder = currentCell;
                 } else if (event.key === 'ArrowRight' && clickedColumn < cols - 1) {
