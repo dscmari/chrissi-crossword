@@ -1,7 +1,7 @@
 {
     "crossword2D" : [
-        ["-","Macht Getränke besser", "-", "Trödeln", "B", "A", "S", "E", "L", "N", "-", "-", "-", "Leuchtdiode (Abk.)", "-", "Fürwort"],
-        ["Gewässer","S", "E", "E", "-", "-", "Lithium (Abk.)", "Schweiz. Flächenmaß", "Frische Rosine", "Aufgussgetränk", "-", "-", "Veröffentlichen", "L", "Kaffeebehälter", "E"],
+        ["-","Macht Getränke besser", "-", "Trödeln", "B", "A", "S", "E", "L", "N", "Neon (Abk.)", "-", "-", "Leuchtdiode (Abk.)", "-", "Fürwort"],
+        ["Gewässer","S", "E", "E", "-", "-", "Lithium (Abk.)", "Schweiz. Flächenmaß", "Frische Rosine", "Aufgussgetränk", "N", "-", "Veröffentlichen", "L", "Kaffeebehälter", "E"],
         ["-","C", "-", "-", "Gollum's Liebelingsplatz", "Milchkaffe (Cafè ...)", "L", "A", "T", "T", "E", "Plätzchen", "K", "E", "K", "S"],
         ["Engl. hoch","H", "I", "G", "H", "Falscher Weg", "I", "R", "R", "E", "Yedimeister", "Y", "O", "D", "A", "-"],
         ["-","A", "-", "-", "O", "-", "Sendungsbringer (Mz.)", "Umlaut", "A", "E", "Rechte Partei", "-", "M", "-", "N", "-"],
@@ -9,7 +9,7 @@
         ["-","M", "-", "Heilplanze (2 Wörter)", "H", "-", "A", "-", "B", "-", "F", "-", "U", "Eingetragener Kaufmann (Abk.)", "E", "K"],
         ["-","Nachlass empfangen", "Getragene Texttilien", "A", "L", "T", "K", "L", "E", "I", "D", "U", "N", "G", "-", "A"],
         ["Nachtvogel","E", "U", "L", "E", "-", "E", "-", "Span. Sonne", "-", "-", "-", "I", "-", "-", "F"],
-        ["-","R", "-", "O", "-", "-", "T", "Zeichnung", "S", "K", "I", "Z", "Z", "E", "Vorgänger Meta", "F"],
+        ["-","R", "-", "O", "Außerirdischer", "E", "T", "Zeichnung", "S", "K", "I", "Z", "Z", "E", "Vorgänger Meta", "F"],
         ["Alkl. Getränk","B", "I", "E", "R", "-", "B", "-", "O", "-", "-", "-", "I", "Eisen (Abk.)", "F", "E"],
         ["-","E", "Personalpronomen", "V", "-", "Schmieren", "O", "E", "L", "E", "N", "Geg. Flut", "E", "B", "B", "E"],
         ["Zu keiner Zeit","N", "I", "E", "-", "Niederschlag (Boxen)", "T", "-", "Geg. offen", "Span. 'in'", "-", "Top-Level-Domain", "R", "-", "-", "Ägyptischer Sonnengott"],
@@ -17,8 +17,8 @@
         ["Bestellplattform","A", "M", "A", "Z", "O", "N", "Nicht oben", "U", "N", "T", "E", "N", "-", "-", "A"]
     ],
     "crossword2D-questions" : [
-        ["-","Macht Getränke besser", "-", "Trödeln", "", "", "", "", "", "", "-", "-", "-", "Leuchtdiode (Abk.)", "-", "Fürwort"],
-        ["Gewässer","", "", "", "-", "-", "Lithium (Abk.)", "Schweiz. Flächenmaß", "Frische Rosine", "Aufgussgetränk", "-", "-", "Veröffentlichen", "", "Kaffeebehälter", ""],
+        ["-","Macht Getränke besser", "-", "Trödeln", "", "", "", "", "", "", "Neon (Abk.)", "-", "-", "Leuchtdiode (Abk.)", "-", "Fürwort"],
+        ["Gewässer","", "", "", "-", "-", "Lithium (Abk.)", "Schweiz. Flächenmaß", "Frische Rosine", "Aufgussgetränk", "", "-", "Veröffentlichen", "", "Kaffeebehälter", ""],
         ["-","", "-", "-", "Gollum's Liebelingsplatz", "Milchkaffe (Cafè ...)", "", "", "", "", "", "Plätzchen", "", "", "", ""],
         ["Engl. hoch","", "", "", "", "Falscher Weg", "", "", "", "", "Yedimeister", "", "", "", "", "-"],
         ["-","", "-", "-", "", "-", "Sendungsbringer (Mz.)", "Umlaut", "", "", "Rechte Partei", "-", "", "-", "", "-"],
@@ -26,7 +26,7 @@
         ["-","", "-", "Heilplanze (2 Wörter)", "", "-", "", "-", "", "-", "", "-", "", "Eingetragener Kaufmann (Abk.)", "", ""],
         ["-","Nachlass empfangen", "Getragene Texttilien", "", "", "", "", "", "", "", "", "", "", "", "-", ""],
         ["Nachtvogel","", "", "", "", "-", "", "-", "Span. Sonne", "-", "-", "-", "", "-", "-", ""],
-        ["-","", "-", "", "-", "-", "", "Zeichnung", "", "", "", "", "", "", "Vorgänger Meta", ""],
+        ["-","", "-", "", "Außerirdischer", "", "", "Zeichnung", "", "", "", "", "", "", "Vorgänger Meta", ""],
         ["Alkl. Getränk","", "", "", "", "-", "", "-", "", "-", "-", "-", "", "Eisen (Abk.)", "", ""],
         ["-","", "Personalpronomen", "", "-", "Schmieren", "", "", "", "", "", "Geg. Flut", "", "", "", ""],
         ["Zu keiner Zeit","", "", "", "-", "Niederschlag (Boxen)", "", "-", "Geg. offen", "Span. 'in'", "-", "Top-Level-Domain", "", "-", "-", "Ägyptischer Sonnengott"],

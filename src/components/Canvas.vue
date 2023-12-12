@@ -128,7 +128,7 @@ export default {
                         // Add the last line
                         lines.push(line.trim());
                         // Draw each line within the same cell
-                        let y = j * cellHeight - lines.length / 100; // Adjust the vertical positioning
+                        let y = j * cellHeight; // Adjust the vertical positioning
                         lines.forEach(line => {
                             context.fillText(line, i * cellWidth + cellWidth / 2, y + cellHeight / 2);
                             y += 10; // Adjust the line spacing
@@ -262,8 +262,6 @@ export default {
             form.appendChild(input);
            
             input.focus();
-            
-            
 
             input.addEventListener('input', event => {
                 // Get the input value and transform to uppercase
@@ -394,8 +392,6 @@ canvas {
 
 #canvas-container {
     position: relative;
-    border: solid 3px blue;
-    padding: 1rem;
 }
 
 p {
