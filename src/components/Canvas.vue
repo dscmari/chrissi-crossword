@@ -187,15 +187,19 @@ export default {
         },
 
         are2DArraysEqual() {
+        console.log("check if equal called")
             const arrayUser = crossword2D["crossword2D-questions"];
             const arrayCorrect = crossword2D["crossword2D"]
             for (let i = 0; i < arrayUser.length; i++) {
                 for (let j = 0; j < arrayUser.length; j++) {
                     if (arrayUser[i][j] !== arrayCorrect[i][j]) {
+                        console.log("i:"+i+" j:" + j+ ' ' + arrayUser[i][j])
+                        console.log("i:"+i+" j:" + j + ' ' + arrayCorrect[i][j])
                         return false;
                     }
                 }
             }
+            console.log("true is returned")
             return true;
         },
 
