@@ -62,7 +62,7 @@ export default {
             // Draw the grid
             const lineWidth = 0.3;
             context.lineWidth = lineWidth;
-            context.textAlign = 'center';
+            context.textAlign = 'left';
             context.textBaseline = 'middle';
             for (let i = 0; i < cols; i++) {
                 for (let j = 0; j < rows; j++) {
@@ -70,6 +70,8 @@ export default {
                     context.strokeRect(i * cellWidth, j * cellHeight, cellWidth, cellHeight);
                     // Draw the word with custom line breaks within the cell
                     const cellContent = crossword2D["crossword2D-questions"][j][i];
+                    console.log("Zelle: " + j +' '+ i)
+                    console.log(cellContent)
                     // Set font size based on the length of cell content
                     context.font = this.getFontSize(cellContent);
                     // Check if the cell content is '-'
@@ -80,59 +82,89 @@ export default {
                         context.fillStyle = 'black';  // Reset the fill color
                     } else {
                         const maxLineWidth = cellWidth - 10;
-                        const words = cellContent.split(' ');
-                        let line = '';
-                        let lines = [];
-                        let currentLineWidth = 0;
-                        for (let word of words) {
-                            const wordWidth = context.measureText(word + ' ').width;
-
-                            // Check if the word itself is too long for the cell
-                            if (wordWidth > maxLineWidth) {
-                                // Break the word into smaller segments
-                                let segment = '';
-                                for (let char of word) {
-                                    const charWidth = context.measureText(char).width;
-                                    if (currentLineWidth + charWidth <= maxLineWidth) {
-                                        // Character fits within the line
-                                        segment += char;
-                                        currentLineWidth += charWidth;
-                                    } else {
-                                        // Start a new line with the current segment
-                                        // Add a hyphen before the break
-                                        if (segment !== '') {
-                                            lines.push(segment + '-');
-                                        }
-                                        segment = char;
-                                        currentLineWidth = charWidth;
-                                    }
-                                }
-                                // Add the last segment
-                                if (segment !== '') {
-                                    lines.push(segment);
-                                }
-                            } else {
-                                // Check if adding the word would exceed the maxLineWidth
-                                if (currentLineWidth + wordWidth <= maxLineWidth) {
-                                    // Word fits within the line
-                                    line += word + ' ';
-                                    currentLineWidth += wordWidth;
-                                } else {
-                                    // Start a new line with the current word
-                                    lines.push(line.trim());
-                                    line = word + ' ';
-                                    currentLineWidth = wordWidth;
-                                }
+                        let lines = []
+                        let y = j * cellHeight; // adjust line starts
+                        let y2 = 2; //adjust vertical position
+                        let x = 8 //adjust horizontal position
+                        if(cellContent.includes('-')){
+                            let wordParts = cellContent.split('-')
+                            for(let wordPart of wordParts ){
+                                lines.push(wordPart)
                             }
+                            if(lines.length === 2){
+                                    y2 = 2.5
+                                }
+                            else if (lines.length === 3){
+                                    y2 = 3
+                                }
+                            console.log(lines)
+                            let isCentered = lines.every(wordPart => wordPart.length < 7)
+                            console.log("is centered " + isCentered)
+                            if(isCentered){
+                                x = 4;
+                            }
+                            lines.forEach(line => {
+                                if(line !== lines[lines.length -1]){
+                                    if(Array.from(line).every(char => char !== '/')){
+                                        line = line + '-'
+                                    }      
+                                }
+                                line = line.replace('/','')                          
+                                context.fillText(line, i * cellWidth + cellWidth / x, y + cellHeight / y2);
+                                y += 14;
+                            })
+                        } else{
+                            if(cellContent.length < 7){
+                                x = 6
+                            }
+                            context.fillText(cellContent, i * cellWidth + cellWidth / x, y + cellHeight / 2);
                         }
+                        
+                        
+                        //     y += 0; // Adjust the line spacing
+                        // for (let word of words) {
+                        //     const wordWidth = context.measureText(word + ' ').width;
+
+                        //     // Check if the word itself is too long for the cell
+                        //     if (wordWidth > maxLineWidth) {
+                        //         // Break the word into smaller segments
+                        //         let segment = '';
+                        //         for (let char of word) {
+                        //             const charWidth = context.measureText(char).width;
+                        //             if (currentLineWidth + charWidth <= maxLineWidth && char !=='/') {
+                        //                 // Character fits within the line
+                        //                 segment += char;
+                        //                 currentLineWidth += charWidth;
+                        //             } else {
+                        //                 // Start a new line with the current segment
+                        //                 // Add a hyphen before the break
+                                    
+                        //                 lines.push(segment + '-');
+                        //                 segment = char;
+                        //                 currentLineWidth = charWidth;
+                        //             }
+                        //         }
+                        //         // Add the last segment
+                        //         if (segment !== '') {
+                        //             lines.push(segment);
+                        //         }
+                        //     } else {
+                        //         // Start a new line with the current word
+                        //         lines.push(line.trim());
+                        //         console.log(lines)
+                        //         line = word + ' ';
+                        //         currentLineWidth = wordWidth;
+                        //     }
+                        // }
                         // Add the last line
-                        lines.push(line.trim());
-                        // Draw each line within the same cell
-                        let y = j * cellHeight; // Adjust the vertical positioning
-                        lines.forEach(line => {
-                            context.fillText(line, i * cellWidth + cellWidth / 2, y + cellHeight / 2);
-                            y += 10; // Adjust the line spacing
-                        });
+                        // lines.push(line.trim());
+                        // // Draw each line within the same cell
+                        // let y = j * cellHeight; // Adjust the vertical positioning
+                        // lines.forEach(line => {
+                        //     line = line.replace('/','')
+                        //     context.fillText(line, i * cellWidth + cellWidth / 2, y + cellHeight / 2);
+                        //     y += 0; // Adjust the line spacing
+                        // });
                     }
 
                 }
@@ -178,34 +210,35 @@ export default {
             for (let i = 1; i < 7; i++) {
                 solutionCells.push(this["solutionCell" + i]);
             }
+            console.log(solutionCells)
             this.solutionCells = solutionCells;
         },
 
         checkIfEmptyCell() {
             const isEmpty = x => x === "";
+            console.log(crossword2D["crossword2D-questions"].some(row => row.some(isEmpty)))
             return crossword2D["crossword2D-questions"].some(row => row.some(isEmpty));
         },
 
         are2DArraysEqual() {
-        console.log("check if equal called")
             const arrayUser = crossword2D["crossword2D-questions"];
             const arrayCorrect = crossword2D["crossword2D"]
             for (let i = 0; i < arrayUser.length; i++) {
                 for (let j = 0; j < arrayUser.length; j++) {
                     if (arrayUser[i][j] !== arrayCorrect[i][j]) {
-                        console.log("i:"+i+" j:" + j+ ' ' + arrayUser[i][j])
-                        console.log("i:"+i+" j:" + j + ' ' + arrayCorrect[i][j])
+                        console.log("arrays are not equal")
                         return false;
                     }
                 }
             }
-            console.log("true is returned")
+            console.log("arrays are equal")
             return true;
         },
 
         checkIfFinished() {
             const hasEmptyCell = this.checkIfEmptyCell();
             if (!hasEmptyCell) {
+                console.log("no cell empty")
                 if (this.are2DArraysEqual()) {
                     alert("you won hurrai")
                 }
@@ -224,10 +257,11 @@ export default {
             let clickedColumn = Math.floor(event.offsetX / cellWidth);
             let clickedRow = Math.floor(event.offsetY / cellHeight);
 
-            //do not create input field if its red cell or question
-            if (crossword2D["crossword2D-questions"][clickedRow][clickedColumn] === '-' || crossword2D["crossword2D-questions"][clickedRow][clickedColumn].length > 1 ) {
+            //check of if we are on a red cell
+            if (crossword2D["crossword2D-questions"][clickedRow][clickedColumn] === '-') {
                 return;
             }
+
             const input = document.createElement('input')
             input.type = 'text';
             input.maxLength = 1;
@@ -260,8 +294,12 @@ export default {
 
             //TODO change element to append to? Is form correct?
             form.appendChild(input);
+            console.log(currentCell)
+            console.log(currentCell.length)
            
             input.focus();
+            
+            
 
             input.addEventListener('input', event => {
                 // Get the input value and transform to uppercase
@@ -296,53 +334,38 @@ export default {
                     crossword2D["crossword2D-questions"][clickedRow][clickedColumn] = '';
                     input.placeholder = '';
                     this.updateSolution();
-                } else if (event.key === 'ArrowLeft') {
-                    if(crossword2D["crossword2D-questions"][clickedRow][clickedColumn - 1].length > 1 || crossword2D["crossword2D-questions"][clickedRow][clickedColumn -1] === '-'){
-                        while(crossword2D["crossword2D-questions"][clickedRow][clickedColumn - 1].length > 1 || crossword2D["crossword2D-questions"][clickedRow][clickedColumn -1] === '-'){
-                            clickedColumn--;
-                            if(clickedColumn === 0){
-                                clickedColumn = 16
-                            }
-                        }
+                } else if (event.key === 'ArrowLeft' && clickedColumn > 0) {
+                    if (crossword2D["crossword2D-questions"][clickedRow][clickedColumn - 1] === '-') {
+                        return;
                     }
+                    // Move left if not at the leftmost column
                     clickedColumn--;
                     currentCell = crossword2D["crossword2D-questions"][clickedRow][clickedColumn];
-                    input.placeholder = currentCell;               
-                } else if (event.key === 'ArrowRight') {
-                    if(clickedColumn === 15 || crossword2D["crossword2D-questions"][clickedRow][clickedColumn + 1].length > 1 || crossword2D["crossword2D-questions"][clickedRow][clickedColumn +1] === '-'){
-                        while(clickedColumn === 15 || crossword2D["crossword2D-questions"][clickedRow][clickedColumn + 1].length > 1 || crossword2D["crossword2D-questions"][clickedRow][clickedColumn +1] === '-'){
-                            if(clickedColumn === 15){
-                                clickedColumn = 0
-                            } else clickedColumn++;
-                        }
+                    input.placeholder = currentCell;
+                } else if (event.key === 'ArrowRight' && clickedColumn < cols - 1) {
+                    if (crossword2D["crossword2D-questions"][clickedRow][clickedColumn + 1] === '-') {
+                        return;
                     }
+                    // Move right if not at the rightmost column
                     clickedColumn++;
                     currentCell = crossword2D["crossword2D-questions"][clickedRow][clickedColumn];
-                    input.placeholder = currentCell; 
-                } else if (event.key === 'ArrowUp') {
-                    if(clickedRow === 0 || crossword2D["crossword2D-questions"][clickedRow - 1][clickedColumn].length > 1 || crossword2D["crossword2D-questions"][clickedRow - 1][clickedColumn] === '-'){
-                        while(clickedRow === 0 || crossword2D["crossword2D-questions"][clickedRow - 1][clickedColumn].length > 1 || crossword2D["crossword2D-questions"][clickedRow - 1][clickedColumn] === '-'){
-                            console.log("in while")
-                            if(clickedRow === 0){
-                                clickedRow = 15
-                            } else clickedRow--;
-                        }
+                    input.placeholder = currentCell;
+                } else if (event.key === 'ArrowUp' && clickedRow > 0) {
+                    if (crossword2D["crossword2D-questions"][clickedRow - 1][clickedColumn] === '-') {
+                        return;
                     }
+                    // Move up if not at the top row
                     clickedRow--;
                     currentCell = crossword2D["crossword2D-questions"][clickedRow][clickedColumn];
-                    input.placeholder = currentCell; 
-                } else if (event.key === 'ArrowDown') {
-                    if(clickedRow === 14 || crossword2D["crossword2D-questions"][clickedRow + 1][clickedColumn].length > 1 || crossword2D["crossword2D-questions"][clickedRow + 1][clickedColumn] === '-'){
-                        while(clickedRow === 14 || crossword2D["crossword2D-questions"][clickedRow + 1][clickedColumn].length > 1 || crossword2D["crossword2D-questions"][clickedRow + 1][clickedColumn] === '-'){
-                            console.log("in while")
-                            if(clickedRow === 14){
-                                clickedRow = -1
-                            } else clickedRow++;
-                        }
+                    input.placeholder = currentCell;
+                } else if (event.key === 'ArrowDown' && clickedRow < rows - 1) {
+                    if (crossword2D["crossword2D-questions"][clickedRow + 1][clickedColumn] === '-') {
+                        return;
                     }
+                    // Move down if not at the bottom row
                     clickedRow++;
                     currentCell = crossword2D["crossword2D-questions"][clickedRow][clickedColumn];
-                    input.placeholder = currentCell; 
+                    input.placeholder = currentCell;
                 }
 
                 // Set the updated position
@@ -392,6 +415,8 @@ canvas {
 
 #canvas-container {
     position: relative;
+    border: solid 3px blue;
+    padding: 1rem;
 }
 
 p {
