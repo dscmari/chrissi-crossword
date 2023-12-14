@@ -257,8 +257,8 @@ export default {
             let clickedColumn = Math.floor(event.offsetX / cellWidth);
             let clickedRow = Math.floor(event.offsetY / cellHeight);
 
-            //check of if we are on a red cell
-            if (crossword2D["crossword2D-questions"][clickedRow][clickedColumn] === '-') {
+           //do not create input field if its red cell or question
+           if (crossword2D["crossword2D-questions"][clickedRow][clickedColumn] === '-' || crossword2D["crossword2D-questions"][clickedRow][clickedColumn].length > 1 ) {
                 return;
             }
 
