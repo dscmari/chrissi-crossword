@@ -334,40 +334,54 @@ export default {
                     crossword2D["crossword2D-questions"][clickedRow][clickedColumn] = '';
                     input.placeholder = '';
                     this.updateSolution();
-                } else if (event.key === 'ArrowLeft' && clickedColumn > 0) {
-                    if (crossword2D["crossword2D-questions"][clickedRow][clickedColumn - 1] === '-') {
-                        return;
+                } else if (event.key === 'ArrowLeft') {
+                    if(crossword2D["crossword2D-questions"][clickedRow][clickedColumn - 1].length > 1 || crossword2D["crossword2D-questions"][clickedRow][clickedColumn -1] === '-'){
+                        while(crossword2D["crossword2D-questions"][clickedRow][clickedColumn - 1].length > 1 || crossword2D["crossword2D-questions"][clickedRow][clickedColumn -1] === '-'){
+                            clickedColumn--;
+                            if(clickedColumn === 0){
+                                clickedColumn = 16
+                            }
+                        }
                     }
-                    // Move left if not at the leftmost column
                     clickedColumn--;
                     currentCell = crossword2D["crossword2D-questions"][clickedRow][clickedColumn];
                     input.placeholder = currentCell;
-                } else if (event.key === 'ArrowRight' && clickedColumn < cols - 1) {
-                    if (crossword2D["crossword2D-questions"][clickedRow][clickedColumn + 1] === '-') {
-                        return;
+                } else if (event.key === 'ArrowRight') {
+                    if(clickedColumn === 15 || crossword2D["crossword2D-questions"][clickedRow][clickedColumn + 1].length > 1 || crossword2D["crossword2D-questions"][clickedRow][clickedColumn +1] === '-'){
+                        while(clickedColumn === 15 || crossword2D["crossword2D-questions"][clickedRow][clickedColumn + 1].length > 1 || crossword2D["crossword2D-questions"][clickedRow][clickedColumn +1] === '-'){
+                            if(clickedColumn === 15){
+                                clickedColumn = 0
+                            } else clickedColumn++;
+                        }
                     }
-                    // Move right if not at the rightmost column
                     clickedColumn++;
                     currentCell = crossword2D["crossword2D-questions"][clickedRow][clickedColumn];
-                    input.placeholder = currentCell;
-                } else if (event.key === 'ArrowUp' && clickedRow > 0) {
-                    if (crossword2D["crossword2D-questions"][clickedRow - 1][clickedColumn] === '-') {
-                        return;
+                    input.placeholder = currentCell; 
+                } else if (event.key === 'ArrowUp') {
+                    if(clickedRow === 0 || crossword2D["crossword2D-questions"][clickedRow - 1][clickedColumn].length > 1 || crossword2D["crossword2D-questions"][clickedRow - 1][clickedColumn] === '-'){
+                        while(clickedRow === 0 || crossword2D["crossword2D-questions"][clickedRow - 1][clickedColumn].length > 1 || crossword2D["crossword2D-questions"][clickedRow - 1][clickedColumn] === '-'){
+                            console.log("in while")
+                            if(clickedRow === 0){
+                                clickedRow = 15
+                            } else clickedRow--;
+                        }
                     }
-                    // Move up if not at the top row
                     clickedRow--;
                     currentCell = crossword2D["crossword2D-questions"][clickedRow][clickedColumn];
-                    input.placeholder = currentCell;
-                } else if (event.key === 'ArrowDown' && clickedRow < rows - 1) {
-                    if (crossword2D["crossword2D-questions"][clickedRow + 1][clickedColumn] === '-') {
-                        return;
+                    input.placeholder = currentCell; 
+                } else if (event.key === 'ArrowDown') {
+                    if(clickedRow === 14 || crossword2D["crossword2D-questions"][clickedRow + 1][clickedColumn].length > 1 || crossword2D["crossword2D-questions"][clickedRow + 1][clickedColumn] === '-'){
+                        while(clickedRow === 14 || crossword2D["crossword2D-questions"][clickedRow + 1][clickedColumn].length > 1 || crossword2D["crossword2D-questions"][clickedRow + 1][clickedColumn] === '-'){
+                            console.log("in while")
+                            if(clickedRow === 14){
+                                clickedRow = -1
+                            } else clickedRow++;
+                        }
                     }
-                    // Move down if not at the bottom row
                     clickedRow++;
                     currentCell = crossword2D["crossword2D-questions"][clickedRow][clickedColumn];
                     input.placeholder = currentCell;
                 }
-
                 // Set the updated position
                 input.style.left = `${clickedColumn * cellWidth + 3}px`;
                 input.style.top = `${clickedRow * cellHeight + 3}px`;
