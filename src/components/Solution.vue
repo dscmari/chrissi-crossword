@@ -40,7 +40,7 @@ ul{
 li{
     width: 50px;
     height: 50px;
-    border: solid 3px black;
+    border: solid 3px #0e2431;
     margin: 1.5px;
     display: flex;
     align-items: center;

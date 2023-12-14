@@ -10,7 +10,6 @@
 
 
 <script>
-import questions from "/src/assets/questions.json";
 import crossword2D from "/src/assets/crossword2D";
 import Solution from "./Solution.vue";
 
@@ -70,14 +69,12 @@ export default {
                     context.strokeRect(i * cellWidth, j * cellHeight, cellWidth, cellHeight);
                     // Draw the word with custom line breaks within the cell
                     const cellContent = crossword2D["crossword2D-questions"][j][i];
-                    console.log("Zelle: " + j +' '+ i)
-                    console.log(cellContent)
                     // Set font size based on the length of cell content
                     context.font = this.getFontSize(cellContent);
                     // Check if the cell content is '-'
                     if (cellContent === '-') {
                         // Draw an empty string with a red background for the cell
-                        context.fillStyle = '#F40009';
+                        context.fillStyle = '#0e2431';
                         context.fillRect(i * cellWidth, j * cellHeight, cellWidth, cellHeight);
                         context.fillStyle = 'black';  // Reset the fill color
                     } else {
@@ -97,9 +94,7 @@ export default {
                             else if (lines.length === 3){
                                     y2 = 3
                                 }
-                            console.log(lines)
                             let isCentered = lines.every(wordPart => wordPart.length < 7)
-                            console.log("is centered " + isCentered)
                             if(isCentered){
                                 x = 4;
                             }
@@ -119,52 +114,6 @@ export default {
                             }
                             context.fillText(cellContent, i * cellWidth + cellWidth / x, y + cellHeight / 2);
                         }
-                        
-                        
-                        //     y += 0; // Adjust the line spacing
-                        // for (let word of words) {
-                        //     const wordWidth = context.measureText(word + ' ').width;
-
-                        //     // Check if the word itself is too long for the cell
-                        //     if (wordWidth > maxLineWidth) {
-                        //         // Break the word into smaller segments
-                        //         let segment = '';
-                        //         for (let char of word) {
-                        //             const charWidth = context.measureText(char).width;
-                        //             if (currentLineWidth + charWidth <= maxLineWidth && char !=='/') {
-                        //                 // Character fits within the line
-                        //                 segment += char;
-                        //                 currentLineWidth += charWidth;
-                        //             } else {
-                        //                 // Start a new line with the current segment
-                        //                 // Add a hyphen before the break
-                                    
-                        //                 lines.push(segment + '-');
-                        //                 segment = char;
-                        //                 currentLineWidth = charWidth;
-                        //             }
-                        //         }
-                        //         // Add the last segment
-                        //         if (segment !== '') {
-                        //             lines.push(segment);
-                        //         }
-                        //     } else {
-                        //         // Start a new line with the current word
-                        //         lines.push(line.trim());
-                        //         console.log(lines)
-                        //         line = word + ' ';
-                        //         currentLineWidth = wordWidth;
-                        //     }
-                        // }
-                        // Add the last line
-                        // lines.push(line.trim());
-                        // // Draw each line within the same cell
-                        // let y = j * cellHeight; // Adjust the vertical positioning
-                        // lines.forEach(line => {
-                        //     line = line.replace('/','')
-                        //     context.fillText(line, i * cellWidth + cellWidth / 2, y + cellHeight / 2);
-                        //     y += 0; // Adjust the line spacing
-                        // });
                     }
 
                 }
@@ -210,13 +159,11 @@ export default {
             for (let i = 1; i < 7; i++) {
                 solutionCells.push(this["solutionCell" + i]);
             }
-            console.log(solutionCells)
             this.solutionCells = solutionCells;
         },
 
         checkIfEmptyCell() {
             const isEmpty = x => x === "";
-            console.log(crossword2D["crossword2D-questions"].some(row => row.some(isEmpty)))
             return crossword2D["crossword2D-questions"].some(row => row.some(isEmpty));
         },
 
@@ -294,13 +241,9 @@ export default {
 
             //TODO change element to append to? Is form correct?
             form.appendChild(input);
-            console.log(currentCell)
-            console.log(currentCell.length)
-           
+        
             input.focus();
             
-            
-
             input.addEventListener('input', event => {
                 // Get the input value and transform to uppercase
                 let inputValue = event.target.value.toUpperCase();
@@ -360,7 +303,6 @@ export default {
                 } else if (event.key === 'ArrowUp') {
                     if(clickedRow === 0 || crossword2D["crossword2D-questions"][clickedRow - 1][clickedColumn].length > 1 || crossword2D["crossword2D-questions"][clickedRow - 1][clickedColumn] === '-'){
                         while(clickedRow === 0 || crossword2D["crossword2D-questions"][clickedRow - 1][clickedColumn].length > 1 || crossword2D["crossword2D-questions"][clickedRow - 1][clickedColumn] === '-'){
-                            console.log("in while")
                             if(clickedRow === 0){
                                 clickedRow = 15
                             } else clickedRow--;
@@ -372,7 +314,6 @@ export default {
                 } else if (event.key === 'ArrowDown') {
                     if(clickedRow === 14 || crossword2D["crossword2D-questions"][clickedRow + 1][clickedColumn].length > 1 || crossword2D["crossword2D-questions"][clickedRow + 1][clickedColumn] === '-'){
                         while(clickedRow === 14 || crossword2D["crossword2D-questions"][clickedRow + 1][clickedColumn].length > 1 || crossword2D["crossword2D-questions"][clickedRow + 1][clickedColumn] === '-'){
-                            console.log("in while")
                             if(clickedRow === 14){
                                 clickedRow = -1
                             } else clickedRow++;
@@ -424,13 +365,11 @@ export default {
 canvas {
     display: block;
     position: relative;
-    border: solid 3px black;
+    border: solid 3px #0e2431;
 }
 
 #canvas-container {
     position: relative;
-    border: solid 3px blue;
-    padding: 1rem;
 }
 
 p {
