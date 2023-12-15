@@ -9,3 +9,13 @@ import Canvas from './components/Canvas.vue';
   <Canvas />
 </template>
 
+<style>
+body{
+  background-image: url(../public/img/christmas-ball_reduced.jpg);
+  background-size: cover;
+}
+h1{
+  color: white;
+  font-family: 'Comic Sans MS', cursive, sans-serif;
+}
+</style>
