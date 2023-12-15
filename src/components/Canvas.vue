@@ -68,7 +68,7 @@ export default {
                     // Draw the cell boundaries
                     context.strokeRect(i * cellWidth, j * cellHeight, cellWidth, cellHeight);
                     // Draw the word with custom line breaks within the cell
-                    const cellContent = crossword2D["crossword2D-questions"][j][i];
+                    let cellContent = crossword2D["crossword2D-questions"][j][i];
                     // Set font size based on the length of cell content
                     context.font = this.getFontSize(cellContent);
                     // Check if the cell content is '-'
@@ -78,7 +78,28 @@ export default {
                         context.fillRect(i * cellWidth, j * cellHeight, cellWidth, cellHeight);
                         context.fillStyle = 'black';  // Reset the fill color
                     } else {
-                        const maxLineWidth = cellWidth - 10;
+                        //Add Arrows
+                        const lastChar = cellContent[cellContent.length - 1];
+                        const arrowSize = 7;
+                        context.fillStyle = 'black';
+                        if(lastChar === 'R'){
+                            context.beginPath();
+                            context.moveTo((i + 1) * cellWidth, (j + 0.5) * cellHeight - arrowSize / 2);
+                            context.lineTo((i + 1) * cellWidth, (j + 0.5) * cellHeight + arrowSize / 2);
+                            context.lineTo((i + 1) * cellWidth + arrowSize, (j + 0.5) * cellHeight);
+                            context.closePath();
+                            context.fill();
+                            cellContent = cellContent.substring(0, cellContent.length - 1)
+                        } else if(lastChar === 'B'){
+                            context.beginPath();
+                            context.moveTo((i + 0.5) * cellWidth - arrowSize / 2, (j + 1) * cellHeight);
+                            context.lineTo((i + 0.5) * cellWidth + arrowSize / 2, (j + 1) * cellHeight);
+                            context.lineTo((i + 0.5) * cellWidth, (j + 1) * cellHeight + arrowSize);
+                            context.closePath();
+                            context.fill();
+                            cellContent = cellContent.substring(0, cellContent.length - 1)
+                        }
+                        
                         let lines = []
                         let y = j * cellHeight; // adjust line starts
                         let y2 = 2; //adjust vertical position
@@ -118,22 +139,6 @@ export default {
 
                 }
             }
-        },
-
-        createArrow(arrowDirection) {
-            const arrow = document.createElement('img');
-            arrow.classList.add('arrow');
-            arrow.style.height = '12px';
-            arrow.style.width = '12px';
-
-            if (arrowDirection === 'right') {
-                arrow.src = '/img/arrow-right.png';
-                arrow.style.transform = 'translateX(-5px)';
-            } else {
-                arrow.src = '/img/arrow-down.png';
-                arrow.style.transform = 'translateX(-35px) translateY(30px)';
-            }
-            return arrow;
         },
 
         updateLocalStorage() {
