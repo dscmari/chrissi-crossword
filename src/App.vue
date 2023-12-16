@@ -11,7 +11,7 @@ import Canvas from './components/Canvas.vue';
 
 <style>
 body{
-  background-image: url(../public/img/christmas-ball_reduced.jpg);
+  background-image: url(../img/christmas-ball_reduced.jpg);
   background-size: cover;
 }
 h1{

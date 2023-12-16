@@ -1,11 +1,16 @@
 <template>
-    <div id="canvas-container">
-        <form ref="form" action="#">
-            <!-- dynamically created input -->
-        </form>
-        <canvas ref="canvas" @click="handleCanvasClick"></canvas>
+    <div>
+        <div class="canvas-container">
+            <form ref="form" action="#">
+                <!-- dynamically created input -->
+            </form>
+            <canvas ref="canvas" @click="handleCanvasClick"></canvas>
+        </div>
+        <div class="solution-container">
+            <Solution :solutionCells="solutionCells" />
+            <button @click="handleHelp">{{helpButtonText}}</button>
+        </div>
     </div>
-    <Solution :solutionCells="solutionCells" />
 </template>
 
 
@@ -17,8 +22,14 @@ export default {
     data() {
         return {
             crossword2D: crossword2D,
-            solutionCells: []
+            solutionCells: [],
+            needHelp: false
         };
+    },
+    computed: {
+        helpButtonText() {
+            return this.needHelp ? "Hilfe aus!" : "Hilfe an!";
+        },
     },
     components: {
         Solution
@@ -49,7 +60,40 @@ export default {
             return cellContent.length > 1 ? '12px serif' : '32px Comic Sans MS';
         },
 
+        markSolutionCell(context, i, j, cellWidth, cellHeight, number){
+                        const text = number+"";
+                        // Coordinates for the upper right corner of the cell
+                        const numX = (j + 1) * cellWidth - 10;  // Adjust the value (10) for the desired positioning
+                        const numY = (i + 0.5) * cellHeight - 22;  // Adjust the value (10) for the desired positioning
+
+                        context.fillStyle = 'black';
+                        context.font = '100 12px sans-serif';  // Adjust the font size and style as needed
+                        context.fillText(text, numX, numY);
+
+                        // Draw the circle
+                        const radius = 25;
+                        const circleX = (j + 0.5) * cellWidth;
+                        const circleY = (i + 0.5) * cellHeight;
+                        context.beginPath()
+                        context.arc(circleX, circleY, radius, 0, 2 * Math.PI);
+                        context.strokeStyle = 'black';
+                        context.lineWidth = 0.01;  // Adjust the line width as needed
+                        context.stroke();
+                        context.lineWidth = 0.2;
+                        context.closePath();
+        },
+
+        markSolutionCells(context, cellWidth, cellHeight){
+            this.markSolutionCell(context, 7, 13, cellWidth, cellHeight, 1);
+            this.markSolutionCell(context, 0, 8, cellWidth, cellHeight, 2);
+            this.markSolutionCell(context, 5, 8, cellWidth, cellHeight, 3);
+            this.markSolutionCell(context, 10, 3, cellWidth, cellHeight, 4);
+            this.markSolutionCell(context, 2, 1, cellWidth, cellHeight, 5);
+            this.markSolutionCell(context, 2, 12, cellWidth, cellHeight, 6);
+        },
+
         drawGrid(canvas, context, cols, rows, cellWidth, cellHeight) {
+            console.log(this.needHelp)
             context.clearRect(0, 0, canvas.width, canvas.height);
             // Draw the grid
             const lineWidth = 0.3;
@@ -62,9 +106,12 @@ export default {
                     context.strokeRect(i * cellWidth, j * cellHeight, cellWidth, cellHeight);
                     // Draw the word with custom line breaks within the cell
                     let cellContent = crossword2D["crossword2D-questions"][j][i];
+        
+                    this.markSolutionCells(context, cellWidth, cellHeight)
+                    
                     // Set font size based on the length of cell content
                     context.font = this.getFontSize(cellContent);
-                    
+            
                     //no content cell
                     if (cellContent === '-') {
                         context.fillStyle = '#0e2431';
@@ -126,12 +173,21 @@ export default {
                             })
                         } else{
                             if(cellContent.length === 1){
-                                x = 2.6;
+                                x = 3;
+                                y2 = 1.7;
                             }
                             else if(cellContent.length < 7){
                                 x = 6;
                             }
-                            context.fillText(cellContent, i * cellWidth + cellWidth / x, y + cellHeight / 2);
+
+                            if(this.needHelp === true && !this.checkIfCellIsCorrect(j,i)){
+                                context.fillStyle = 'red'
+                                context.fillText(cellContent, i * cellWidth + cellWidth / x, y + cellHeight / y2);
+                                context.fillStyle = 'black'
+                            } else context.fillText(cellContent, i * cellWidth + cellWidth / x, y + cellHeight / y2);
+                            
+                            
+                            
                         }
                     }
 
@@ -151,10 +207,10 @@ export default {
         },
 
         updateSolution() {
-            this.solutionCell1 = crossword2D["crossword2D-questions"][3][3]; //G
-            this.solutionCell2 = crossword2D["crossword2D-questions"][7][4]; //L
-            this.solutionCell3 = crossword2D["crossword2D-questions"][5][1]; //U
-            this.solutionCell4 = crossword2D["crossword2D-questions"][11][15]; //E
+            this.solutionCell1 = crossword2D["crossword2D-questions"][7][13]; //G
+            this.solutionCell2 = crossword2D["crossword2D-questions"][0][8]; //L
+            this.solutionCell3 = crossword2D["crossword2D-questions"][5][8]; //U
+            this.solutionCell4 = crossword2D["crossword2D-questions"][10][3]; //E
             this.solutionCell5 = crossword2D["crossword2D-questions"][2][1]; //C
             this.solutionCell6 = crossword2D["crossword2D-questions"][2][12]; //K
 
@@ -179,6 +235,7 @@ export default {
                         console.log("arrays are not equal")
                         console.log(arrayUser[i][j])
                         console.log(i +" "+j)
+                        // this.drawGrid(canvas, context, cols, rows, cellWidth, cellHeight)
                         return false;
                     }
                 }
@@ -193,8 +250,30 @@ export default {
                 console.log("no cell empty")
                 if (this.are2DArraysEqual()) {
                     alert("you won hurrai")
+                    return true
                 }
-            }
+            } else return false;
+        },
+
+        handleHelp(event){
+            console.log(this.needHelp)
+            this.needHelp = !this.needHelp;
+            const form = this.$refs.form;
+            const canvas = this.$refs.canvas;
+            const context = canvas.getContext('2d');
+            const cols = 16;
+            const rows = 15;
+            const cellWidth = canvas.width / cols;
+            const cellHeight = canvas.height / rows;
+            let clickedColumn = Math.floor(event.offsetX / cellWidth);
+            let clickedRow = Math.floor(event.offsetY / cellHeight);
+           
+            this.drawGrid(canvas, context, cols, rows, cellWidth, cellHeight)
+            
+        },
+
+        checkIfCellIsCorrect(col, row){
+            return crossword2D["crossword2D-questions"][col][row] === crossword2D["crossword2D"][col][row]
         },
 
         handleCanvasClick(event) {
@@ -367,25 +446,33 @@ canvas {
 
 }
 
-#canvas-container {
+.canvas-container {
     position: relative;
     background-color: white;
     border: solid 1px #0e2431;
     opacity: 0.9;
 }
 
-p {
-    min-width: 100%;
-    font-size: 12px;
-    padding: 0;
-    margin: 0px;
-    line-height: 1;
-    word-wrap: break-word;
-    z-index: 2;
+.solution-container{
+    display: flex;
+    justify-content: space-between;
 }
 
 form {
     position: relative;
     z-index: 30;
 }
+
+button{
+    font-family: 'Comic Sans MS', cursive, sans-serif;
+    font-size: 20px;
+    font-weight: bold;
+    color: #0e2431;
+    margin: 1rem;
+    padding: 0.5rem;
+    width: 20%;
+    border: solid 2px #0e2431;
+}
+
+
 </style>
