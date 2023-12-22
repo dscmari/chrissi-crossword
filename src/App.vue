@@ -1,5 +1,3 @@
-
-
 <template>
     <div class="container">
         <div v-if="isSmallScreen" class="info-screen">
