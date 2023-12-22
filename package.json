@@ -9,6 +9,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "canvas-confetti": "^1.9.2",
+    "confetti-js": "^0.0.18",
     "vue": "^3.3.8"
   },
   "devDependencies": {

@@ -8,7 +8,7 @@
         </div>
         <div class="solution-container">
             <Solution :solutionCells="solutionCells" />
-            <button @click="handleHelp">{{helpButtonText}}</button>
+            <button @click="handleHelp">{{ helpButtonText }}</button>
         </div>
     </div>
 </template>
@@ -17,6 +17,8 @@
 <script>
 import crossword2D from "/src/assets/crossword2D";
 import Solution from "./Solution.vue";
+import { showConfetti } from "../confetti.js"
+
 
 export default {
     data() {
@@ -60,30 +62,30 @@ export default {
             return cellContent.length > 1 ? '12px serif' : '32px Comic Sans MS';
         },
 
-        markSolutionCell(context, i, j, cellWidth, cellHeight, number){
-                        const text = number+"";
-                        // Coordinates for the upper right corner of the cell
-                        const numX = (j + 1) * cellWidth - 10;  // Adjust the value (10) for the desired positioning
-                        const numY = (i + 0.5) * cellHeight - 22;  // Adjust the value (10) for the desired positioning
+        markSolutionCell(context, i, j, cellWidth, cellHeight, number) {
+            const text = number + "";
+            // Coordinates for the upper right corner of the cell
+            const numX = (j + 1) * cellWidth - 10;  // Adjust the value (10) for the desired positioning
+            const numY = (i + 0.5) * cellHeight - 22;  // Adjust the value (10) for the desired positioning
 
-                        context.fillStyle = 'black';
-                        context.font = '100 12px sans-serif';  // Adjust the font size and style as needed
-                        context.fillText(text, numX, numY);
+            context.fillStyle = 'black';
+            context.font = '100 12px sans-serif';  // Adjust the font size and style as needed
+            context.fillText(text, numX, numY);
 
-                        // Draw the circle
-                        const radius = 25;
-                        const circleX = (j + 0.5) * cellWidth;
-                        const circleY = (i + 0.5) * cellHeight;
-                        context.beginPath()
-                        context.arc(circleX, circleY, radius, 0, 2 * Math.PI);
-                        context.strokeStyle = 'black';
-                        context.lineWidth = 0.01;  // Adjust the line width as needed
-                        context.stroke();
-                        context.lineWidth = 0.2;
-                        context.closePath();
+            // Draw the circle
+            const radius = 25;
+            const circleX = (j + 0.5) * cellWidth;
+            const circleY = (i + 0.5) * cellHeight;
+            context.beginPath()
+            context.arc(circleX, circleY, radius, 0, 2 * Math.PI);
+            context.strokeStyle = 'black';
+            context.lineWidth = 0.01;  // Adjust the line width as needed
+            context.stroke();
+            context.lineWidth = 0.2;
+            context.closePath();
         },
 
-        markSolutionCells(context, cellWidth, cellHeight){
+        markSolutionCells(context, cellWidth, cellHeight) {
             this.markSolutionCell(context, 7, 13, cellWidth, cellHeight, 1);
             this.markSolutionCell(context, 0, 8, cellWidth, cellHeight, 2);
             this.markSolutionCell(context, 5, 8, cellWidth, cellHeight, 3);
@@ -93,7 +95,6 @@ export default {
         },
 
         drawGrid(canvas, context, cols, rows, cellWidth, cellHeight) {
-            console.log(this.needHelp)
             context.clearRect(0, 0, canvas.width, canvas.height);
             // Draw the grid
             const lineWidth = 0.3;
@@ -106,12 +107,12 @@ export default {
                     context.strokeRect(i * cellWidth, j * cellHeight, cellWidth, cellHeight);
                     // Draw the word with custom line breaks within the cell
                     let cellContent = crossword2D["crossword2D-questions"][j][i];
-        
+
                     this.markSolutionCells(context, cellWidth, cellHeight)
-                    
+
                     // Set font size based on the length of cell content
                     context.font = this.getFontSize(cellContent);
-            
+
                     //no content cell
                     if (cellContent === '-') {
                         context.fillStyle = '#0e2431';
@@ -122,7 +123,7 @@ export default {
                         const lastChar = cellContent[cellContent.length - 1];
                         const arrowSize = 7;
                         context.fillStyle = 'black';
-                        if(lastChar === 'R' && cellContent.length > 1){
+                        if (lastChar === 'R' && cellContent.length > 1) {
                             context.beginPath();
                             context.moveTo((i + 1) * cellWidth, (j + 0.5) * cellHeight - arrowSize / 2);
                             context.lineTo((i + 1) * cellWidth, (j + 0.5) * cellHeight + arrowSize / 2);
@@ -130,7 +131,7 @@ export default {
                             context.closePath();
                             context.fill();
                             cellContent = cellContent.substring(0, cellContent.length - 1)
-                        } else if(lastChar === 'B' && cellContent.length > 1){
+                        } else if (lastChar === 'B' && cellContent.length > 1) {
                             context.beginPath();
                             context.moveTo((i + 0.5) * cellWidth - arrowSize / 2, (j + 1) * cellHeight);
                             context.lineTo((i + 0.5) * cellWidth + arrowSize / 2, (j + 1) * cellHeight);
@@ -139,58 +140,54 @@ export default {
                             context.fill();
                             cellContent = cellContent.substring(0, cellContent.length - 1)
                         }
-                        
+
                         //adjust position cell content
                         let lines = []
                         let y = j * cellHeight; //adjust line starts
                         let y2 = 2; //adjust vertical position
                         let x = 8 //adjust horizontal position
                         //break words if too long (marked in crossword2D.json file)
-                        if(cellContent.includes('-')){
+                        if (cellContent.includes('-')) {
                             let wordParts = cellContent.split('-')
-                            for(let wordPart of wordParts ){
+                            for (let wordPart of wordParts) {
                                 lines.push(wordPart)
                             }
-                            if(lines.length === 2){
-                                    y2 = 2.5
-                                }
-                            else if (lines.length === 3){
-                                    y2 = 3
-                                }
+                            if (lines.length === 2) {
+                                y2 = 2.5
+                            }
+                            else if (lines.length === 3) {
+                                y2 = 3
+                            }
                             let isCentered = lines.every(wordPart => wordPart.length < 7)
-                            if(isCentered){
+                            if (isCentered) {
                                 x = 4;
                             }
                             lines.forEach(line => {
-                                if(line !== lines[lines.length -1]){
-                                    if(Array.from(line).every(char => char !== '/')){
+                                if (line !== lines[lines.length - 1]) {
+                                    if (Array.from(line).every(char => char !== '/')) {
                                         line = line + '-'
-                                    }      
+                                    }
                                 }
-                                line = line.replace('/','')                          
+                                line = line.replace('/', '')
                                 context.fillText(line, i * cellWidth + cellWidth / x, y + cellHeight / y2);
                                 y += 14;
                             })
-                        } else{
-                            if(cellContent.length === 1){
+                        } else {
+                            if (cellContent.length === 1) {
                                 x = 3;
                                 y2 = 1.7;
                             }
-                            else if(cellContent.length < 7){
+                            else if (cellContent.length < 7) {
                                 x = 6;
                             }
 
-                            if(this.needHelp === true && !this.checkIfCellIsCorrect(j,i)){
+                            if (this.needHelp === true && !this.checkIfCellIsCorrect(j, i)) {
                                 context.fillStyle = 'red'
                                 context.fillText(cellContent, i * cellWidth + cellWidth / x, y + cellHeight / y2);
                                 context.fillStyle = 'black'
                             } else context.fillText(cellContent, i * cellWidth + cellWidth / x, y + cellHeight / y2);
-                            
-                            
-                            
                         }
                     }
-
                 }
             }
         },
@@ -234,7 +231,7 @@ export default {
                     if (arrayUser[i][j] !== arrayCorrect[i][j]) {
                         console.log("arrays are not equal")
                         console.log(arrayUser[i][j])
-                        console.log(i +" "+j)
+                        console.log(i + " " + j)
                         // this.drawGrid(canvas, context, cols, rows, cellWidth, cellHeight)
                         return false;
                     }
@@ -245,34 +242,32 @@ export default {
         },
 
         checkIfFinished() {
+            console.log("checkIfFinished called")
             const hasEmptyCell = this.checkIfEmptyCell();
+            console.log(hasEmptyCell)
             if (!hasEmptyCell) {
                 console.log("no cell empty")
                 if (this.are2DArraysEqual()) {
-                    alert("you won hurrai")
+                    showConfetti();
                     return true
                 }
             } else return false;
         },
 
-        handleHelp(event){
-            console.log(this.needHelp)
+        handleHelp(event) {
             this.needHelp = !this.needHelp;
-            const form = this.$refs.form;
             const canvas = this.$refs.canvas;
             const context = canvas.getContext('2d');
             const cols = 16;
             const rows = 15;
             const cellWidth = canvas.width / cols;
             const cellHeight = canvas.height / rows;
-            let clickedColumn = Math.floor(event.offsetX / cellWidth);
-            let clickedRow = Math.floor(event.offsetY / cellHeight);
-           
+
             this.drawGrid(canvas, context, cols, rows, cellWidth, cellHeight)
-            
+
         },
 
-        checkIfCellIsCorrect(col, row){
+        checkIfCellIsCorrect(col, row) {
             return crossword2D["crossword2D-questions"][col][row] === crossword2D["crossword2D"][col][row]
         },
 
@@ -288,8 +283,8 @@ export default {
             let clickedColumn = Math.floor(event.offsetX / cellWidth);
             let clickedRow = Math.floor(event.offsetY / cellHeight);
 
-           //do not create input field if its red cell or question
-           if (crossword2D["crossword2D-questions"][clickedRow][clickedColumn] === '-' || crossword2D["crossword2D-questions"][clickedRow][clickedColumn].length > 1 ) {
+            //do not create input field if its red cell or question
+            if (crossword2D["crossword2D-questions"][clickedRow][clickedColumn] === '-' || crossword2D["crossword2D-questions"][clickedRow][clickedColumn].length > 1) {
                 return;
             }
 
@@ -299,7 +294,7 @@ export default {
 
             //size input element
             input.style.height = cellHeight - 1.5 + 'px';
-            input.style.width = cellWidth -1.5 + 'px';
+            input.style.width = cellWidth - 1.5 + 'px';
             input.style.maxHeight = cellHeight + 'px';
             input.style.maxWidth = cellWidth + 'px';
 
@@ -323,17 +318,17 @@ export default {
 
             //TODO change element to append to? Is form correct?
             form.appendChild(input);
-        
+
             input.focus();
-            
+
             input.addEventListener('input', event => {
 
                 //reset current cell to prevent input text and cell content overlap
                 crossword2D["crossword2D-questions"][clickedRow][clickedColumn] = "";
                 this.drawGrid(canvas, context, cols, rows, cellWidth, cellHeight)
-           
+
                 let inputValue = event.target.value.toUpperCase();
-             
+
                 // Ensure that the input only contains A-Z
                 inputValue = inputValue.replace(/[^A-Z]/g, '');
                 userInput = inputValue.charAt(0);
@@ -344,11 +339,11 @@ export default {
                     //pass solution cells to solution component
                     this.updateSolution()
                     this.updateLocalStorage();
-                    
+
                     //this.drawGrid(canvas, context, cols, rows, cellWidth, cellHeight)
                     this.checkIfFinished()
                 }
-                
+
             });
 
             document.addEventListener('click', (event) => {
@@ -370,10 +365,10 @@ export default {
                     // input.placeholder = '';
                     this.updateSolution();
                 } else if (event.key === 'ArrowLeft') {
-                    if(crossword2D["crossword2D-questions"][clickedRow][clickedColumn - 1].length > 1 || crossword2D["crossword2D-questions"][clickedRow][clickedColumn -1] === '-'){
-                        while(crossword2D["crossword2D-questions"][clickedRow][clickedColumn - 1].length > 1 || crossword2D["crossword2D-questions"][clickedRow][clickedColumn -1] === '-'){
+                    if (crossword2D["crossword2D-questions"][clickedRow][clickedColumn - 1].length > 1 || crossword2D["crossword2D-questions"][clickedRow][clickedColumn - 1] === '-') {
+                        while (crossword2D["crossword2D-questions"][clickedRow][clickedColumn - 1].length > 1 || crossword2D["crossword2D-questions"][clickedRow][clickedColumn - 1] === '-') {
                             clickedColumn--;
-                            if(clickedColumn === 0){
+                            if (clickedColumn === 0) {
                                 clickedColumn = 16
                             }
                         }
@@ -382,9 +377,9 @@ export default {
                     currentCell = crossword2D["crossword2D-questions"][clickedRow][clickedColumn];
                     // input.placeholder = currentCell;
                 } else if (event.key === 'ArrowRight') {
-                    if(clickedColumn === 15 || crossword2D["crossword2D-questions"][clickedRow][clickedColumn + 1].length > 1 || crossword2D["crossword2D-questions"][clickedRow][clickedColumn +1] === '-'){
-                        while(clickedColumn === 15 || crossword2D["crossword2D-questions"][clickedRow][clickedColumn + 1].length > 1 || crossword2D["crossword2D-questions"][clickedRow][clickedColumn +1] === '-'){
-                            if(clickedColumn === 15){
+                    if (clickedColumn === 15 || crossword2D["crossword2D-questions"][clickedRow][clickedColumn + 1].length > 1 || crossword2D["crossword2D-questions"][clickedRow][clickedColumn + 1] === '-') {
+                        while (clickedColumn === 15 || crossword2D["crossword2D-questions"][clickedRow][clickedColumn + 1].length > 1 || crossword2D["crossword2D-questions"][clickedRow][clickedColumn + 1] === '-') {
+                            if (clickedColumn === 15) {
                                 clickedColumn = 0
                             } else clickedColumn++;
                         }
@@ -393,9 +388,9 @@ export default {
                     currentCell = crossword2D["crossword2D-questions"][clickedRow][clickedColumn];
                     // input.placeholder = currentCell; 
                 } else if (event.key === 'ArrowUp') {
-                    if(clickedRow === 0 || crossword2D["crossword2D-questions"][clickedRow - 1][clickedColumn].length > 1 || crossword2D["crossword2D-questions"][clickedRow - 1][clickedColumn] === '-'){
-                        while(clickedRow === 0 || crossword2D["crossword2D-questions"][clickedRow - 1][clickedColumn].length > 1 || crossword2D["crossword2D-questions"][clickedRow - 1][clickedColumn] === '-'){
-                            if(clickedRow === 0){
+                    if (clickedRow === 0 || crossword2D["crossword2D-questions"][clickedRow - 1][clickedColumn].length > 1 || crossword2D["crossword2D-questions"][clickedRow - 1][clickedColumn] === '-') {
+                        while (clickedRow === 0 || crossword2D["crossword2D-questions"][clickedRow - 1][clickedColumn].length > 1 || crossword2D["crossword2D-questions"][clickedRow - 1][clickedColumn] === '-') {
+                            if (clickedRow === 0) {
                                 clickedRow = 15
                             } else clickedRow--;
                         }
@@ -404,9 +399,9 @@ export default {
                     currentCell = crossword2D["crossword2D-questions"][clickedRow][clickedColumn];
                     // input.placeholder = currentCell; 
                 } else if (event.key === 'ArrowDown') {
-                    if(clickedRow === 14 || crossword2D["crossword2D-questions"][clickedRow + 1][clickedColumn].length > 1 || crossword2D["crossword2D-questions"][clickedRow + 1][clickedColumn] === '-'){
-                        while(clickedRow === 14 || crossword2D["crossword2D-questions"][clickedRow + 1][clickedColumn].length > 1 || crossword2D["crossword2D-questions"][clickedRow + 1][clickedColumn] === '-'){
-                            if(clickedRow === 14){
+                    if (clickedRow === 14 || crossword2D["crossword2D-questions"][clickedRow + 1][clickedColumn].length > 1 || crossword2D["crossword2D-questions"][clickedRow + 1][clickedColumn] === '-') {
+                        while (clickedRow === 14 || crossword2D["crossword2D-questions"][clickedRow + 1][clickedColumn].length > 1 || crossword2D["crossword2D-questions"][clickedRow + 1][clickedColumn] === '-') {
+                            if (clickedRow === 14) {
                                 clickedRow = -1
                             } else clickedRow++;
                         }
@@ -453,9 +448,10 @@ canvas {
     opacity: 0.9;
 }
 
-.solution-container{
+.solution-container {
     display: flex;
     justify-content: space-between;
+    align-items: center;
 }
 
 form {
@@ -463,16 +459,23 @@ form {
     z-index: 30;
 }
 
-button{
+button {
     font-family: 'Comic Sans MS', cursive, sans-serif;
     font-size: 20px;
     font-weight: bold;
     color: #0e2431;
-    margin: 1rem;
+    margin: 1rem 0 0 1rem;
     padding: 0.5rem;
     width: 20%;
+    height: 80%;
     border: solid 2px #0e2431;
 }
 
-
+.heart{
+    position: fixed;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: red;
+}
 </style>

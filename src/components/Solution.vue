@@ -2,7 +2,11 @@
     <div class="flex-container">
         <p>Lösungswort: </p>
         <ul>
-            <li v-for="char in solutionCells" :key="char">{{ char }}</li>
+            <li v-for="(char, index) in solutionCells" :key="char">
+                {{ char }}
+                <span class="number">{{ index + 1 }}</span>
+            </li>
+                
         </ul>
     </div>
 </template>
@@ -11,8 +15,7 @@
 
 export default {
     props: {
-        solutionCells: Array,
-        testArray: Array
+        solutionCells: Array
     }
 };
 
@@ -46,6 +49,7 @@ ul {
 }
 
 li {
+    position: relative;
     width: 50px;
     height: 50px;
     border: solid 3px #0e2431;
@@ -57,5 +61,14 @@ li {
     background-color: white;
     font-family: 'Comic Sans MS', cursive, sans-serif;
     font-size: 40px;
+}
+
+.number{
+    position: absolute;
+    top: 0;
+    right: 0;
+    font-family: sans-serif;
+    font-size: 12px;
+    padding: 4px;
 }
 </style>
